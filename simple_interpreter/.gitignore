@@ -1,45 +1,32 @@
-# bloop and metals
-.bloop
-.bsp
-
-# metals
-project/metals.sbt
-.metals
-
-# vs code
-.vscode
-
-# scala 3
-.tasty
-
-# sbt
-project/project/
-project/target/
-target/
-
-# eclipse
-build/
-.classpath
-.project
-.settings
-.worksheet
-bin/
-.cache
-
-# intellij idea
-*.log
-*.iml
-*.ipr
-*.iws
-.idea
-
-# mac
+# macOS
 .DS_Store
 
-# other?
+# sbt specific
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/local-plugins.sbt
 .history
-.scala_dependencies
-.cache-main
+.ensime
+.ensime_cache/
+.sbt-scripted/
+local.sbt
 
-# general
-*.class
+# Bloop
+.bsp
+
+# VS Code
+.vscode/
+
+# Metals
+.bloop/
+.metals/
+metals.sbt
+
+# IDEA
+.idea
+.idea_modules
+/.worksheet/
