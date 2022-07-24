@@ -16,6 +16,10 @@ class Parser {
     println(s"${eol}Error: $s was expected")
     sys.exit(1)
 
+  private def howDidYouGetHere =
+    println("Error: Unexpected newline ot I/O error")
+    sys.exit(0)
+
   private def expect(c: Char): Unit =
     if lookAhead.contains(c)
     then advance()
@@ -29,27 +33,39 @@ class Parser {
       case _ =>
         expected("Integer")
     while lookAhead.exists(_.isDigit)
-      do
+    do
       lookAhead match
         case Some(c) =>
           total = 10 * total + c.asDigit
           advance()
         case _ =>
-          expected("digit")
+          howDidYouGetHere
     total
 
+  private def factor() =
+    lookAhead match
+      case Some('(') =>
+        expect('(')
+        val n = expression()
+        expect(')')
+        n
+      case Some(_) =>
+        takeNum()
+      case _ =>
+        howDidYouGetHere
+
   private def term() =
-    var left = takeNum()
+    var left = factor()
     while (lookAhead.exists(isMultOp(_)))
       lookAhead match
         case Some('*') =>
           expect('*')
-          left = left * takeNum()
+          left = left * factor()
         case Some('/') =>
           expect('/')
-          left = left / takeNum()
+          left = left / factor()
         case _ =>
-          expected("operator")
+          howDidYouGetHere
     left
 
   private val isAddOp = Set('+', '-').contains
@@ -64,7 +80,7 @@ class Parser {
         case _ =>
           term()
     while lookAhead.exists(isAddOp)
-      do
+    do
       lookAhead match
         case Some('+') =>
           expect('+')
@@ -73,7 +89,7 @@ class Parser {
           expect('-')
           left -= term()
         case _ =>
-          expected("operator")
+          howDidYouGetHere
     left
 
 
