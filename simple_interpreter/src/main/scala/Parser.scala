@@ -1,10 +1,14 @@
 import scala.io.StdIn
-import scala.util.Properties.lineSeparator
+import scala.util.Properties.{ScalaCompilerVersion, lineSeparator}
 
 class Parser {
   private val eol = lineSeparator
+  private val varTable = scala.collection.mutable.Map.empty[String, Int]
   private var lookAhead: Option[Char] = None
   private val inStream = System.in
+
+  private def skipNewLine(): Unit =
+    advance()
 
   private def advance(): Unit =
     lookAhead = inStream.read() match
@@ -24,6 +28,20 @@ class Parser {
     if lookAhead.contains(c)
     then advance()
     else expected(c.toString)
+
+  private def takeName() =
+    if lookAhead.exists(c => !c.isLetter) then expected("Name")
+    var name = ""
+    while lookAhead.exists(_.isLetterOrDigit)
+    do
+      lookAhead match
+        case Some(c) =>
+          name += c
+          advance()
+        case _ =>
+          howDidYouGetHere
+    name
+
 
   private def takeNum() =
     var total = lookAhead match
@@ -49,6 +67,8 @@ class Parser {
         val n = expression()
         expect(')')
         n
+      case Some(c) if c.isLetter =>
+        varTable.getOrElse(takeName(), 0)
       case Some(_) =>
         takeNum()
       case _ =>
@@ -92,10 +112,33 @@ class Parser {
           howDidYouGetHere
     left
 
+  private def assignment(): Unit =
+    val name = takeName()
+    expect('=')
+    varTable(name) = expression()
+
+  private def input(): Unit =
+    expect('?')
+    varTable(takeName()) =
+      advance()
+      takeNum()
+
+  private def output(): Unit =
+    expect('!')
+    println(varTable(takeName()))
 
   private def init(): Unit = advance()
 
   def run(): Unit =
     init()
-    println(expression())
+    while lookAhead.exists(_ != '.')
+      do
+      lookAhead match
+        case Some('?') =>
+          input()
+        case Some('!') =>
+          output()
+        case _ =>
+          assignment()
+      skipNewLine()
 }
