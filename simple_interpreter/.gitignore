@@ -28,4 +28,4 @@ metals.sbt
 .idea_modules
 /.worksheet/
 
-*.sc
+**/*.sc
