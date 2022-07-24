@@ -1,5 +1,5 @@
+import scala.io.StdIn.readChar
 @main def hello(): Unit =
-  println("Hello world!")
-  println(msg)
+  val p = Parser()
+  p.run()
 
-def msg = "I was compiled by Scala 3. :)"
