@@ -1,5 +1,4 @@
-import scala.io.StdIn.readChar
+import Utilities.Token
 @main def hello(): Unit =
-  val p = Parser()
-  p.run()
-
+  val lex = LexedParser(ConsoleSource(), ConsoleSink())
+  lex.doProgram()
