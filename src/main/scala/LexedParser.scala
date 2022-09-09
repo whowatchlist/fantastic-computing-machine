@@ -175,8 +175,8 @@ class LexedParser(source: CharStream, sink: Output) {
 
   def lessThan(left: Int): Boolean =
     scan() match
-      case Token.Operator("<") => left > expression()
-      case Token.Operator("<=") => left >= expression()
+      case Token.Operator("<") => left < expression()
+      case Token.Operator("<=") => left <= expression()
       case _ => throw UnexpectedTokenException("< or <= was expected")
 
   def equalsR(left: Int): Boolean =
@@ -223,11 +223,10 @@ class LexedParser(source: CharStream, sink: Output) {
         case _ => throw UnexpectedTokenException("Unclosed control flow")
 
   def seekNext(tokens: Set[Token]): Token =
-    var current = currentToken
-    while !tokens.contains(current) do
+    while !tokens.contains(currentToken) do
       skipLine()
-      current = scan()
-    current
+      currentToken = scan()
+    currentToken
 
   def assignment(): Unit =
     val varName = currentToken match
@@ -246,12 +245,7 @@ class LexedParser(source: CharStream, sink: Output) {
       case _ => throw UnexpectedTokenException("Integer was expected")
 
   def printValue(): Unit =
-    val varToPrint = scan() match
-      case Token.Name(name) => name
-      case _ => throw UnexpectedTokenException("Identifier was expected")
-    varTable.get(varToPrint) match
-      case Some(value) => sink.write(value)
-      case None => throw UnexpectedTokenException("Undefined variable")
+    sink.write(expression())
 
   def block(): Unit =
     currentToken = scan()
