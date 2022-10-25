@@ -5,6 +5,6 @@ This a handwritten recursive descent parser built for learning purposes.
 * No backtracking
 * Generates useful feedback for syntax errors
 
-# Usage:
+## Usage:
 
-![gif of interacting with the interpreter][usage_example.gif]
+![gif of interacting with the interpreter](usage_example.gif)
