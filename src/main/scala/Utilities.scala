@@ -5,8 +5,9 @@ object Utilities {
       "if" -> Token.If,
       "else" -> Token.Else,
       "elseif" -> Token.Elseif,
+      "quit" -> Token.Quit,
       "end" -> Token.End,
-      "endif" -> Token.Endif,
+      "while" -> Token.While,
       "true" -> Token.Bool(true),
       "false" -> Token.Bool(false),
       "read" -> Token.Read,
@@ -20,8 +21,9 @@ object Utilities {
     case If
     case Else
     case Elseif
-    case Endif
     case End
+    case While
+    case Quit
     case Newline
     case Read
     case Print

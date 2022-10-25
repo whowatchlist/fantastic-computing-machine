@@ -209,18 +209,24 @@ class LexedParser(source: CharStream, sink: Output) {
   def doIf(): Unit =
     if condition() then
       block()
-      seekNext(Set(Token.Endif))
-      matchString(Token.Endif)
+      seekNext(Set(Token.End))
+      matchString(Token.End)
     else
-      seekNext(Set(Token.Else, Token.Endif)) match
-        case Token.Endif =>
-          matchString(Token.Endif)
+      seekNext(Set(Token.Else, Token.End)) match
+        case Token.End =>
+          matchString(Token.End)
           scan()
         case Token.Else =>
           scan()
           block()
-          matchString(Token.Endif)
+          matchString(Token.End)
         case _ => throw UnexpectedTokenException("Unclosed control flow")
+
+    def doWhile(): Unit =
+      if condition() then
+        block()
+        seekNext(Set(Token.End))
+        matchString(Token.End)
 
   def seekNext(tokens: Set[Token]): Token =
     while !tokens.contains(currentToken) do
@@ -249,10 +255,12 @@ class LexedParser(source: CharStream, sink: Output) {
 
   def block(): Unit =
     currentToken = scan()
-    while ! Set(Token.End, Token.Endif, Token.Else).contains(currentToken) do
+    while ! Set(Token.Quit, Token.End, Token.Else).contains(currentToken) do
       currentToken match
         case Token.If => 
           doIf()
+          fin()
+        case Token.While =>
           fin()
         case Token.Read =>
           readValue()
@@ -267,5 +275,5 @@ class LexedParser(source: CharStream, sink: Output) {
 
   def doProgram(): Unit =
     block()
-    matchString(Token.End)
+    matchString(Token.Quit)
 }
